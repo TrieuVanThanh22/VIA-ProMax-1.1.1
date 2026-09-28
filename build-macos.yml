@@ -1,0 +1,23 @@
+name: Build macOS
+on:
+  workflow_dispatch:
+
+jobs:
+  build-macos:
+    runs-on: macos-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+      - name: Install dependencies
+        run: python3 -m pip install -r requirements-build.txt
+      - name: Build APP
+        run: python3 -m PyInstaller --noconfirm --clean --windowed --name ViaProMax --icon assets/app_icon.icns --add-data "assets:assets" ViaProMax.py
+      - name: Zip app
+        run: cd dist && zip -r ViaProMax-macOS.zip ViaProMax.app
+      - name: Upload artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: ViaProMax-macOS
+          path: dist/ViaProMax-macOS.zip
