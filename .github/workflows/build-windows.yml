@@ -1,0 +1,21 @@
+name: Build Windows
+on:
+  workflow_dispatch:
+
+jobs:
+  build-windows:
+    runs-on: windows-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+      - name: Install dependencies
+        run: py -m pip install -r requirements-build.txt
+      - name: Build EXE
+        run: py -m PyInstaller --noconfirm --clean --windowed --onefile --name ViaProMax --icon assets\app_icon.ico --add-data "assets;assets" ViaProMax.py
+      - name: Upload artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: ViaProMax-Windows
+          path: dist/ViaProMax.exe
